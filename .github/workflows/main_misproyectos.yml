@@ -21,10 +21,6 @@ jobs:
         with:
           node-version: '20.x'
 
-      # Add a step to change directory if your frontend is in a subdirectory
-      - name: Change to frontend directory
-        run: cd mis-proyectos-front
-
       - name: npm install, build, and test
         run: |
           npm install
