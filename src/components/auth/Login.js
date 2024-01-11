@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 function Login() {
     const navigate = useNavigate();
-    const [error, setError] = useState('');
+    const [formErrors, setFormErrors] = useState({});
 
     const handleLogin = async (event) => {
         event.preventDefault();
@@ -24,17 +24,20 @@ function Login() {
             });
 
             const result = await response.json();
-            console.log(result);
 
             if (response.ok) {
                 localStorage.setItem('accessToken', result.access_token);
                 navigate('/projects');
             } else {
-                setError('Login failed: ' + (result.message || 'Please check your credentials'));
+                if (result.error && typeof result.error === 'object') {
+                    setFormErrors(result.error);
+                } else if (result.error) {
+                    setFormErrors({ general: result.error });
+                }
             }
         } catch (error) {
             console.error('Login error:', error);
-            setError('Network error');
+            setFormErrors({ general: 'Network error' });
         }
     };
 
@@ -52,7 +55,7 @@ function Login() {
                 <Typography component="h1" variant="h5">
                     Login
                 </Typography>
-                {error && <Alert severity="error">{error}</Alert>}
+                {formErrors.general && <Alert severity="error">{formErrors.general}</Alert>}
                 <Box component="form" onSubmit={handleLogin} sx={{ mt: 1 }}>
                     <TextField
                         margin="normal"
@@ -62,6 +65,8 @@ function Login() {
                         name="email"
                         autoComplete="email"
                         autoFocus
+                        error={!!formErrors.email}
+                        helperText={formErrors.email && formErrors.email.join(" ")}
                     />
                     <TextField
                         margin="normal"
@@ -71,6 +76,8 @@ function Login() {
                         label="Password"
                         type="password"
                         autoComplete="current-password"
+                        error={!!formErrors.password}
+                        helperText={formErrors.password && formErrors.password.join(" ")}
                     />
                     <Button
                         type="submit"

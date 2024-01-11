@@ -1,10 +1,10 @@
 import React from 'react';
-import {Alert, Box, Button, Container, TextField, Typography} from '@mui/material';
-import {useNavigate} from "react-router-dom";
+import { Alert, Box, Button, Container, TextField, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 function Register() {
     const navigate = useNavigate();
-    const [errorMessage, setErrorMessage] = React.useState('');
+    const [formErrors, setFormErrors] = React.useState({});
 
     const handleRegister = async (event) => {
         event.preventDefault();
@@ -33,29 +33,20 @@ function Register() {
             if (response.ok) {
                 navigate('/login');
             } else {
-                setErrorMessage(result.message || 'Registration failed');
+                setFormErrors(result.error || { general: 'An unexpected error occurred' });
             }
         } catch (error) {
-            console.error('Error:', error);
-            setErrorMessage('Network error');
+            setFormErrors({ general: 'Network error' });
         }
     };
 
     return (
         <Container component="main" maxWidth="xs">
-            <Box
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    minHeight: '81vh',
-                    justifyContent: 'center'
-                }}
-            >
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '81vh', justifyContent: 'center' }}>
                 <Typography component="h1" variant="h5">
                     Register
                 </Typography>
-                {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+                {formErrors.general && <Alert severity="error">{formErrors.general}</Alert>}
                 <Box component="form" onSubmit={handleRegister} sx={{ mt: 1 }}>
                     <TextField
                         margin="normal"
@@ -64,6 +55,8 @@ function Register() {
                         label="Username"
                         name="username"
                         autoComplete="username"
+                        error={Boolean(formErrors.username)}
+                        helperText={formErrors.username ? formErrors.username[0] : ''}
                     />
                     <TextField
                         margin="normal"
@@ -72,6 +65,8 @@ function Register() {
                         label="Email Address"
                         name="email"
                         autoComplete="email"
+                        error={Boolean(formErrors.email)}
+                        helperText={formErrors.email ? formErrors.email[0] : ''}
                     />
                     <TextField
                         margin="normal"
@@ -81,6 +76,8 @@ function Register() {
                         label="Password"
                         type="password"
                         autoComplete="new-password"
+                        error={Boolean(formErrors.password)}
+                        helperText={formErrors.password ? formErrors.password[0] : ''}
                     />
                     <TextField
                         margin="normal"
@@ -90,6 +87,8 @@ function Register() {
                         label="Confirm Password"
                         type="password"
                         autoComplete="new-password"
+                        error={Boolean(formErrors.password_confirmation)}
+                        helperText={formErrors.password_confirmation ? formErrors.password_confirmation[0] : ''}
                     />
                     <Button
                         type="submit"
