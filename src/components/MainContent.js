@@ -19,7 +19,6 @@ function MainContent() {
                 marginTop: '2rem',
             },
         }}>
-            {/* Description */}
             <Box sx={{
                 backgroundColor: theme.palette.background.paper,
                 padding: '2rem',
@@ -35,8 +34,6 @@ function MainContent() {
                     Aplikacja jest stale wspierana i rozwijana, więc można spodziewać się nowych funkcjonalności.
                 </Typography>
             </Box>
-
-            {/* Buttons */}
             <Box>
                 <Button
                     variant="contained"

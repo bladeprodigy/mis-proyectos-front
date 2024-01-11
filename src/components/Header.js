@@ -1,7 +1,8 @@
 import React from 'react';
-import { Box, Button, Typography, useMediaQuery, useTheme } from '@mui/material';
-import { useLocation, useNavigate } from 'react-router-dom';
-import LogoutButton from './LogoutButton';
+import {Box, Button, Typography, useMediaQuery, useTheme} from '@mui/material';
+import {useLocation, useNavigate} from 'react-router-dom';
+import LogoutButton from "./auth/LogoutButton";
+
 
 function Header({ showLogout }) {
     const theme = useTheme();
@@ -25,7 +26,7 @@ function Header({ showLogout }) {
                     sx={{ position: 'absolute', left: '20px', color: 'white', minWidth: matchesSM ? 'auto' : '48px' }}
                     onClick={() => navigate('/projects')}
                 >
-                    {matchesSM ? 'Back to Projects' : '<'} {/* Icon or shorter text for small screens */}
+                    {matchesSM ? 'Back to Projects' : '<'}
                 </Button>
             )}
 

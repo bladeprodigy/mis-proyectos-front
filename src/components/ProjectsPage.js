@@ -1,21 +1,10 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {
-    Alert,
-    Box,
-    Button,
-    Container,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    ToggleButton,
-    ToggleButtonGroup
-} from '@mui/material';
-import NewProjectDialog from "./NewProjectDialog";
+import {Alert, Box, Container} from '@mui/material';
 import {useNavigate} from "react-router-dom";
+import NewProjectButton from "./buttons/NewProjectButton";
+import ProjectToggleButtons from "./buttons/ProjectToggleButtons";
+import NewProjectDialog from "./dialogs/NewProjectDialog";
+import ProjectTable from "./project/ProjectTable";
 
 function ProjectsPage() {
     const [view, setView] = useState('ongoing');
@@ -99,47 +88,15 @@ function ProjectsPage() {
     };
 
     return (
-        <Box sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            minHeight: '82vh'
-        }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '81vh' }}>
             <Container component="main" sx={{ flex: '1 0 auto', pt: 4, pb: 4 }}>
                 {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <Button variant="contained" onClick={handleNewProjectClick} sx={{ mb: 2 }}>
-                        Create New Project
-                    </Button>
-                    <ToggleButtonGroup color="primary" value={view} exclusive onChange={handleViewChange} sx={{ mb: 2 }}>
-                        <ToggleButton value="ongoing">Ongoing</ToggleButton>
-                        <ToggleButton value="finished">Finished</ToggleButton>
-                    </ToggleButtonGroup>
+                    <NewProjectButton onClick={handleNewProjectClick} />
+                    <ProjectToggleButtons view={view} onChange={handleViewChange} />
                 </Box>
                 <NewProjectDialog open={openDialog} onClose={handleCloseDialog} onCreate={handleCreateProject} />
-                <TableContainer component={Paper} sx={{ marginTop: '20px' }}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell align="center">NAME</TableCell>
-                                <TableCell align="center">START DATE</TableCell>
-                                <TableCell align="center">END DATE</TableCell>
-                                <TableCell align="center">PARTICIPANTS</TableCell>
-                                <TableCell align="center">DESCRIPTION</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {projectsData.map((project, index) => (
-                                <TableRow key={index} hover onClick={() => navigate(`/projects/${project.id}`)}>
-                                    <TableCell align="center">{project.name}</TableCell>
-                                    <TableCell align="center">{project.startDate}</TableCell>
-                                    <TableCell align="center">{project.plannedEndDate}</TableCell>
-                                    <TableCell align="center">{project.participants}</TableCell>
-                                    <TableCell align="center">{project.description}</TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                <ProjectTable projectsData={projectsData} view={view} navigate={navigate} />
             </Container>
         </Box>
     );
