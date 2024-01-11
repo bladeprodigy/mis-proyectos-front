@@ -102,7 +102,7 @@ function ProjectsPage() {
         <Box sx={{
             display: 'flex',
             flexDirection: 'column',
-            minHeight: '100vh'
+            minHeight: '82vh'
         }}>
             <Container component="main" sx={{ flex: '1 0 auto', pt: 4, pb: 4 }}>
                 {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}

@@ -45,7 +45,7 @@ function Login() {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    minHeight: '100vh',
+                    minHeight: '82vh',
                     justifyContent: 'center'
                 }}
             >

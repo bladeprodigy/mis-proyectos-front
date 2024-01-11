@@ -151,7 +151,7 @@ const ProjectDetails = () => {
     const showActionButtons = project.status !== "completed";
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '82vh', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
             {showActionButtons && (
                 <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mb: 2 }}>
                     <Button variant="contained" color="primary" onClick={handleEdit}>Edit</Button>

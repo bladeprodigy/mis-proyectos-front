@@ -11,7 +11,12 @@ function Footer() {
             textAlign: 'center',
             padding: '0.5rem 0',
         }}>
-            <Typography variant="body1">FOOTER</Typography>
+            <Typography variant="body2">
+                © {new Date().getFullYear()} |  MIS PROYECTOS
+            </Typography>
+            <Typography variant="body2">
+                Developed by Aleks Gałęza | Maciej Zarzycki | Mateusz Trzebiatowski | Michał Turbiarz
+            </Typography>
         </Box>
     );
 }
