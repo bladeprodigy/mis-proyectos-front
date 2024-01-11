@@ -1,6 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and deploy Node.js app to Azure Web App - misproyectos
 
 on:
@@ -28,8 +25,8 @@ jobs:
       - name: Build the project
         run: npm run build --if-present
 
-      - name: Zip the build directory
-        run: zip -r build.zip build/
+      - name: Zip the contents of the build directory
+        run: zip -r build.zip build/*
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
@@ -50,13 +47,13 @@ jobs:
         with:
           name: build-artifact
 
-      - name: Unzip the build artifact
-        run: unzip build.zip -d ./build
+      - name: Unzip the build artifact directly
+        run: unzip build.zip
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'misproyectos' # Your Azure Web App name
-          slot-name: 'Production' # Your slot name if applicable
-          package: ./build
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D015D6D1A0234A8D8429117712F60504 }} # Your Azure publish profile secret
+          app-name: 'misproyectos'
+          slot-name: 'Production'
+          package: '.'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D015D6D1A0234A8D8429117712F60504 }}
