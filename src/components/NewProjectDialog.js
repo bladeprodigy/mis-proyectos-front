@@ -1,78 +1,81 @@
-import React from 'react';
-import {Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField} from '@mui/material';
+import React, { useState } from 'react';
+import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button } from '@mui/material';
 
 const NewProjectDialog = ({ open, onClose, onCreate }) => {
-    // Function to handle the form submission
-    const handleFormSubmit = (event) => {
-        event.preventDefault();
-        const formData = new FormData(event.currentTarget);
-        // Pass the form data up to the parent component
-        onCreate({
-            name: formData.get('name'),
-            startDate: formData.get('startDate'),
-            endDate: formData.get('endDate'),
-            participants: formData.get('participants'),
-            description: formData.get('description'),
+    const [projectData, setProjectData] = useState({
+        name: '',
+        description: '',
+        plannedEndDate: '',
+        participants: ''
+    });
+
+    const handleChange = (e) => {
+        setProjectData({
+            ...projectData,
+            [e.target.name]: e.target.value
         });
+    };
+
+    const handleCreate = () => {
+        onCreate(projectData);
+        setProjectData({ name: '', description: '', plannedEndDate: '', participants: '' });
     };
 
     return (
         <Dialog open={open} onClose={onClose}>
             <DialogTitle>Create New Project</DialogTitle>
             <DialogContent>
-                <Box component="form" onSubmit={handleFormSubmit} noValidate sx={{ mt: 1 }}>
-                    <TextField
-                        required
-                        fullWidth
-                        id="name"
-                        label="Project Name"
-                        name="name"
-                        margin="dense"
-                    />
-                    <TextField
-                        required
-                        fullWidth
-                        id="startDate"
-                        label="Start Date"
-                        name="startDate"
-                        type="date"
-                        InputLabelProps={{ shrink: true }}
-                        margin="dense"
-                    />
-                    <TextField
-                        required
-                        fullWidth
-                        id="endDate"
-                        label="End Date"
-                        name="endDate"
-                        type="date"
-                        InputLabelProps={{ shrink: true }}
-                        margin="dense"
-                    />
-                    <TextField
-                        required
-                        fullWidth
-                        id="participants"
-                        label="Participants"
-                        name="participants"
-                        margin="dense"
-                    />
-                    <TextField
-                        required
-                        fullWidth
-                        id="description"
-                        label="Description"
-                        name="description"
-                        multiline
-                        rows={4}
-                        margin="dense"
-                    />
-                    <DialogActions>
-                        <Button onClick={onClose}>Cancel</Button>
-                        <Button type="submit" variant="contained">Create</Button>
-                    </DialogActions>
-                </Box>
+                <TextField
+                    autoFocus
+                    margin="dense"
+                    label="Project Name"
+                    type="text"
+                    fullWidth
+                    variant="outlined"
+                    name="name"
+                    value={projectData.name}
+                    onChange={handleChange}
+                />
+                <TextField
+                    margin="dense"
+                    label="Description"
+                    type="text"
+                    fullWidth
+                    multiline
+                    rows={4}
+                    variant="outlined"
+                    name="description"
+                    value={projectData.description}
+                    onChange={handleChange}
+                />
+                <TextField
+                    margin="dense"
+                    label="Planned End Date"
+                    type="date"
+                    fullWidth
+                    variant="outlined"
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    name="plannedEndDate"
+                    value={projectData.plannedEndDate}
+                    onChange={handleChange}
+                />
+                <TextField
+                    margin="dense"
+                    label="Participants"
+                    type="text"
+                    fullWidth
+                    variant="outlined"
+                    name="participants"
+                    value={projectData.participants}
+                    onChange={handleChange}
+                />
             </DialogContent>
+            <DialogActions>
+                <Button onClick={onClose}>Cancel</Button>
+                <Button onClick={handleCreate}>Create</Button>
+            </DialogActions>
         </Dialog>
     );
 };

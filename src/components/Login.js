@@ -27,7 +27,6 @@ function Login() {
             console.log(result);
 
             if (response.ok) {
-                // Correctly access the token from the API response
                 localStorage.setItem('accessToken', result.access_token);
                 navigate('/projects');
             } else {

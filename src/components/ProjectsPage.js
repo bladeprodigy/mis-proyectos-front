@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
+    Alert,
     Box,
     Button,
     Container,
@@ -16,37 +17,45 @@ import {
 import NewProjectDialog from "./NewProjectDialog";
 import {useNavigate} from "react-router-dom";
 
-const ongoingProjects = [
-    { name: 'Ongoing Project 1', creationDate: '09-14-2024', plannedEndDate: '03-12-2025', participants: 'Carol Johnson, Alice Smith, Dave Doe, Jane Brown, Dave Smith', description: 'Description of ongoing project 1. An in-depth look into the progress and milestones achieved.' },
-    { name: 'Ongoing Project 2', creationDate: '05-06-2024', plannedEndDate: '04-04-2025', participants: 'Bob Doe, Bob Davis, Carol Smith', description: 'Description of ongoing project 2. An in-depth look into the progress and milestones achieved.' },
-    { name: 'Ongoing Project 3', creationDate: '04-23-2024', plannedEndDate: '08-21-2025', participants: 'Bob Johnson, Dave Johnson, Jane Davis, Carol Davis', description: 'Description of ongoing project 3. An in-depth look into the progress and milestones achieved.' },
-    { name: 'Ongoing Project 4', creationDate: '10-15-2024', plannedEndDate: '03-30-2025', participants: 'Alice Brown, Bob Wilson, Bob Wilson, John Brown', description: 'Description of ongoing project 4. An in-depth look into the progress and milestones achieved.' },
-    { name: 'Ongoing Project 5', creationDate: '02-26-2024', plannedEndDate: '01-16-2025', participants: 'Dave Johnson, John Smith', description: 'Description of ongoing project 5. An in-depth look into the progress and milestones achieved.' }
-];
-
-const finishedProjects = [
-    { name: 'Finished Project A', creationDate: '01-01-2022', plannedEndDate: '02-02-2022', participants: 'Carol, Dave', description: 'A completed project with results' },
-    { name: 'Finished Project B', creationDate: '03-15-2022', plannedEndDate: '04-15-2022', participants: 'Alice, Bob, Charlie', description: 'A successful project that met all its goals.' },
-    { name: 'Finished Project C', creationDate: '05-20-2022', plannedEndDate: '06-22-2022', participants: 'Dave, Erin', description: 'Project completed with outstanding feedback.' },
-    { name: 'Finished Project D', creationDate: '07-03-2022', plannedEndDate: '08-14-2022', participants: 'Fiona, George', description: 'A project that had a significant impact on our operations.' },
-    { name: 'Finished Project E', creationDate: '09-10-2022', plannedEndDate: '10-12-2022', participants: 'Hannah, Ian, Jack', description: 'Finished ahead of schedule with excellent results.' }
-];
-
-
 function ProjectsPage() {
     const [view, setView] = useState('ongoing');
-    const [projectsData, setProjectsData] = useState(ongoingProjects); // Initially show ongoing projects
+    const [projectsData, setProjectsData] = useState([]);
+    const [error, setError] = useState('');
     const navigate = useNavigate();
+
+    const fetchProjects = async () => {
+        const endpoint = view === 'ongoing' ? '/projects/ongoing' : '/projects/completed';
+        const url = `https://laravelfinalproject.azurewebsites.net${endpoint}`;
+        const token = localStorage.getItem('accessToken');
+
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            setProjectsData(data);
+        } catch (error) {
+            console.error('Fetch error:', error);
+            setError('Failed to fetch projects');
+        }
+    };
+
+    useEffect(() => {
+        fetchProjects();
+    }, [view]);
 
     const handleViewChange = (event, nextView) => {
         if (nextView !== null) {
             setView(nextView);
-            // Simulate fetching data for the selected view
-            if (nextView === 'ongoing') {
-                setProjectsData(ongoingProjects);
-            } else {
-                setProjectsData(finishedProjects);
-            }
         }
     };
 
@@ -60,69 +69,69 @@ function ProjectsPage() {
         setOpenDialog(false);
     };
 
-    const handleCreateProject = (newProjectData) => {
-        console.log(newProjectData);
-        handleCloseDialog();
+    const handleCreateProject = async (newProjectData) => {
+        const url = 'https://laravelfinalproject.azurewebsites.net/projects';
+        const token = localStorage.getItem('accessToken');
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newProjectData)
+            });
+
+            if (!response.ok) {
+                new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('New project created:', data);
+            handleCloseDialog();
+
+            fetchProjects();
+        } catch (error) {
+            console.error('Error creating project:', error);
+            setError('Failed to create project');
+        }
     };
 
-    const handleRowClick = (projectName) => {
-        // Navigate to the ProjectDetails page for the clicked project
-        navigate(`/project/${encodeURIComponent(projectName)}`);
-    }
-
     return (
-        <Box
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                minHeight: '100vh',
-                justifyContent: 'space-between',
-            }}
-        >
-            <Container component="main" sx={{ flex: '1 0 auto', paddingTop: '64px', paddingBottom: '64px' }}>
-                {/* Add this button to trigger the New Project Dialog */}
-                <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: '40px' }}> {/* Increase marginBottom for more space */}
-                    <Button variant="contained" onClick={handleNewProjectClick} sx={{ width: '200px' }}>Create New Project</Button>
-                </Box>
-                {/* New Project Dialog */}
-                <NewProjectDialog
-                    open={openDialog}
-                    onClose={handleCloseDialog}
-                    onCreate={handleCreateProject}
-                />
-                <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-                    <ToggleButtonGroup
-                        color="primary"
-                        value={view}
-                        exclusive
-                        onChange={handleViewChange}
-                        sx={{ width: '50%', justifyContent: 'center' }} // Set the width as desired
-                    >
-                        <ToggleButton value="ongoing" sx={{ width: '50%' }}>Ongoing</ToggleButton>
-                        <ToggleButton value="finished" sx={{ width: '50%' }}>Finished</ToggleButton>
+        <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            minHeight: '100vh'
+        }}>
+            <Container component="main" sx={{ flex: '1 0 auto', pt: 4, pb: 4 }}>
+                {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <Button variant="contained" onClick={handleNewProjectClick} sx={{ mb: 2 }}>
+                        Create New Project
+                    </Button>
+                    <ToggleButtonGroup color="primary" value={view} exclusive onChange={handleViewChange} sx={{ mb: 2 }}>
+                        <ToggleButton value="ongoing">Ongoing</ToggleButton>
+                        <ToggleButton value="finished">Finished</ToggleButton>
                     </ToggleButtonGroup>
                 </Box>
-                <TableContainer component={Paper} sx={{ maxWidth: '95%', margin: 'auto' }}>
-                    <Table aria-label="simple table" sx={{ minWidth: 650 }}>
+                <NewProjectDialog open={openDialog} onClose={handleCloseDialog} onCreate={handleCreateProject} />
+                <TableContainer component={Paper} sx={{ marginTop: '20px' }}>
+                    <Table>
                         <TableHead>
                             <TableRow>
                                 <TableCell align="center">NAME</TableCell>
-                                <TableCell align="center">CREATION DATE</TableCell>
-                                <TableCell align="center">PLANNED END DATE</TableCell>
+                                <TableCell align="center">START DATE</TableCell>
+                                <TableCell align="center">END DATE</TableCell>
                                 <TableCell align="center">PARTICIPANTS</TableCell>
                                 <TableCell align="center">DESCRIPTION</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {projectsData.map((project, index) => (
-                                <TableRow
-                                    key={index}
-                                    hover
-                                    onClick={() => handleRowClick(project.name)}
-                                    sx={{ cursor: 'pointer' }}
-                                >
+                                <TableRow key={index} hover onClick={() => navigate(`/projects/${project.id}`)}>
                                     <TableCell align="center">{project.name}</TableCell>
-                                    <TableCell align="center">{project.creationDate}</TableCell>
+                                    <TableCell align="center">{project.startDate}</TableCell>
                                     <TableCell align="center">{project.plannedEndDate}</TableCell>
                                     <TableCell align="center">{project.participants}</TableCell>
                                     <TableCell align="center">{project.description}</TableCell>

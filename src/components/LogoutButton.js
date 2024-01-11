@@ -1,4 +1,3 @@
-// LogoutButton.js
 import React, {useState} from 'react';
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@mui/material';
 import {useNavigate} from 'react-router-dom';
@@ -16,9 +15,7 @@ const LogoutButton = () => {
     };
 
     const handleLogout = () => {
-        // Implement logout logic here, e.g., clearing user data, tokens, etc.
-        console.log('User has logged out');
-        // Redirect to login page or any other page
+        localStorage.removeItem('accessToken');
         navigate('/');
         handleClose();
     };

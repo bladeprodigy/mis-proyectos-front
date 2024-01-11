@@ -10,7 +10,6 @@ function Register() {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
 
-        // Construct the payload
         const payload = {
             username: data.get('username'),
             email: data.get('email'),
@@ -18,7 +17,6 @@ function Register() {
             password_confirmation: data.get('confirmPassword'),
         };
 
-        // API endpoint
         const url = 'https://laravelfinalproject.azurewebsites.net/register';
 
         try {
@@ -33,13 +31,11 @@ function Register() {
             const result = await response.json();
 
             if (response.ok) {
-                navigate('/login'); // Redirect to login page on successful registration
+                navigate('/login');
             } else {
-                // Handle errors
                 setErrorMessage(result.message || 'Registration failed');
             }
         } catch (error) {
-            // Handle network errors
             console.error('Error:', error);
             setErrorMessage('Network error');
         }

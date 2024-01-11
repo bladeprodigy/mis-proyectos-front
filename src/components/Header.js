@@ -8,7 +8,7 @@ function Header({ showLogout }) {
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
     const navigate = useNavigate();
     const location = useLocation();
-    const isProjectDetail = location.pathname.match(/\/projects\/\d+$/); // Adjust this regex based on your actual URL pattern
+    const isProjectDetail = location.pathname.match(/\/projects\/\d+$/);
 
     return (
         <Box sx={{
@@ -19,7 +19,7 @@ function Header({ showLogout }) {
             justifyContent: 'center',
             alignItems: 'center',
             padding: matches ? '2rem' : '1rem',
-            position: 'relative', // Added for absolute positioning of buttons
+            position: 'relative',
         }}>
             {isProjectDetail && (
                 <Button
