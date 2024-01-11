@@ -1,3 +1,6 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
 name: Build and deploy Node.js app to Azure Web App - misproyectos
 
 on:
@@ -11,30 +14,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build the project
-        run: npm run build --if-present
-
-      - name: Zip the contents of the build directory
+      - name: npm install, build, and test
         run: |
-          cd build
-          zip -r ../build.zip *
+          npm install
+          npm run build --if-present
+          npm run test --if-present
 
-      - name: Upload build artifact
+      - name: Zip artifact for deployment
+        run: zip release.zip ./* -r
+
+      - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
-          name: build-artifact
-          path: build.zip
+          name: node-app
+          path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -44,18 +44,19 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
-      - name: Download build artifact
+      - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
-          name: build-artifact
+          name: node-app
 
-      - name: Unzip the build artifact directly
-        run: unzip build.zip -d .
+      - name: Unzip artifact for deployment
+        run: unzip release.zip
 
-      - name: Deploy to Azure Web App
+      - name: 'Deploy to Azure Web App'
+        id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'misproyectos'
           slot-name: 'Production'
-          package: '.'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F43F5A8F50CA44109EEE9F4B57F34ABC }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D913F5FC328E4162988B067C603FD7C3 }}
+          package: .
