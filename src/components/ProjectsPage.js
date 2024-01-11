@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
     Alert,
     Box,
@@ -23,7 +23,7 @@ function ProjectsPage() {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const fetchProjects = async () => {
+    const fetchProjects = useCallback(async () => {
         const endpoint = view === 'ongoing' ? '/projects/ongoing' : '/projects/completed';
         const url = `https://laravelfinalproject.azurewebsites.net${endpoint}`;
         const token = localStorage.getItem('accessToken');
@@ -47,11 +47,11 @@ function ProjectsPage() {
             console.error('Fetch error:', error);
             setError('Failed to fetch projects');
         }
-    };
+    }, [view]);
 
     useEffect(() => {
         fetchProjects();
-    }, [view]);
+    }, [fetchProjects]);
 
     const handleViewChange = (event, nextView) => {
         if (nextView !== null) {

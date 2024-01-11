@@ -143,6 +143,11 @@ const ProjectDetails = () => {
         return <Typography>Loading...</Typography>;
     }
 
+    if (error) {
+        return <Typography color="error">{error}</Typography>;
+    }
+
+
     const showActionButtons = project.status !== "completed";
 
     return (
