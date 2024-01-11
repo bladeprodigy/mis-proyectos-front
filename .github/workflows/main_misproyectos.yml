@@ -52,6 +52,9 @@ jobs:
       - name: Unzip the build artifact directly
         run: unzip build.zip -d .
 
+      - name: Remove index.js from wwwroot
+        run: rm -f /home/site/wwwroot/index.js
+
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
