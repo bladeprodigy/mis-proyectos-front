@@ -15,7 +15,7 @@ function Footer() {
                 © {new Date().getFullYear()} |  MIS PROYECTOS
             </Typography>
             <Typography variant="body2">
-                Developed by Aleks Gałęza | Maciej Zarzycki | Mateusz Trzebiatowski | Michał Turbiarz
+                Developed by Aleks Gałęza | Michał Turbiarz
             </Typography>
         </Box>
     );
